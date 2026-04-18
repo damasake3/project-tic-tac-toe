@@ -2,11 +2,9 @@ const Game = (function () {
 
     function start() {
         const board = GameBoard.test();
-        let freeTiles = GameBoard.scan(board);
-
         const player1 = Players.init()[0];
         const player2 = Players.init()[1];
-
+        let freeTiles;
         let turn;
 
         //console.table(board);
@@ -15,16 +13,18 @@ const Game = (function () {
 
         round(board, player1, player2);
 
+        console.table(player1)
+        console.table(player2);
     }
 
     function round(board, player1, player2) {
         let winner = checkWin(board);
-        if (player1.marker === winner) {
+        if (player1.mark === winner) {
             playerScore(player1);
             console.table(player1);
             console.table(player2);
         }
-        else if (player2.marker === winner) {
+        else if (player2.mark === winner) {
             playerScore(player2);
             console.table(player1);
             console.table(player2);
@@ -67,7 +67,7 @@ const Game = (function () {
                 let winner = markOwner(board[0].mark);
                 console.log("TOP-Y Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[0].name; 
+                return board[0].mark; 
         }
         // Center-Y
         else if (board[3].mark !== "" && board[4].mark !== "" && board[5].mark !== ""
@@ -75,7 +75,7 @@ const Game = (function () {
                 let winner = markOwner(board[3].mark);
                 console.log("CENTER-Y Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[3].name; 
+                return board[3].mark; 
         }
         // Bottom-Y
         else if (board[6].mark !== "" && board[7].mark !== "" && board[8].mark !== ""
@@ -83,7 +83,7 @@ const Game = (function () {
                 let winner = markOwner(board[6].mark);
                 console.log("BOTTOM-Y Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[6].name; 
+                return board[6].mark; 
         }
         // Top-X
         else if (board[0].mark !== "" && board[3].mark !== "" && board[6].mark !== ""
@@ -91,7 +91,7 @@ const Game = (function () {
                 let winner = markOwner(board[0].mark);
                 console.log("TOP-X Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[0].name; 
+                return board[0].mark; 
         }
         // Center-X
         else if (board[1].mark !== "" && board[4].mark !== "" && board[7].mark !== ""
@@ -99,7 +99,7 @@ const Game = (function () {
                 let winner = markOwner(board[1].mark);
                 console.log("CENTER-X Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[1].name; 
+                return board[1].mark; 
         }
         // Bottom-X
         else if (board[2].mark !== "" && board[5].mark !== "" && board[8].mark !== ""
@@ -107,29 +107,27 @@ const Game = (function () {
                 let winner = markOwner(board[2].mark);
                 console.log("BOTTOM-X Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[2].name; 
+                return board[2].mark; 
         }
         // Left-XY
         else if (board[0].mark !== "" && board[4].mark !== "" && board[8].mark !== ""
             && (board[0].mark === board[4].mark && board[4].mark === board[8].mark)) {
-                console.clear();
                 console.log(board[0].mark);
                 console.log(`MARKOWNER: ${markOwner(board[0].mark)}`)
                 let winner = markOwner(board[0].mark);
                 console.log("LEFT-XY Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[0].name; 
+                return board[0].mark; 
         }
         // Right-XY
         else if (board[6].mark !== "" && board[4].mark !== "" && board[2].mark !== ""
             && (board[6].mark === board[4].mark && board[4].mark === board[2].mark)) {
-                console.clear();
                 console.log(board[6].mark);
                 console.log(`MARKOWNER: ${markOwner(board[6].mark)}`)
                 let winner = markOwner(board[6].mark);
                 console.log("RIGHT-XY Victory!");
                 console.log(`Winner ${winner}!`);
-                return board[6].name; 
+                return board[6].mark; 
         }
 
         function markOwner(mark){
@@ -163,8 +161,8 @@ const Game = (function () {
 
 const Players = (function () {
     const players = [
-        { name: "Player", marker: "O", score: 0 },
-        { name: "Computer", marker: "X", score: 0 },
+        { name: "Player", mark: "O", score: 0 },
+        { name: "Computer", mark: "X", score: 0 },
     ];
 
     function init() {
