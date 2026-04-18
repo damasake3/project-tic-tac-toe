@@ -4,16 +4,11 @@ const Game = (function () {
         const board = GameBoard.test();
         const player1 = Players.init()[0];
         const player2 = Players.init()[1];
-        let freeTiles;
-        let turn;
+        let turn = 0;
 
-        //console.table(board);
-        // console.table(player1);
-        // console.table(player2);
 
-        // round(board, player1, player2);
-        console.clear();
-        playerChoice(board);
+        playerChoice(player1, board);
+        console.table(board);
     }
 
     function round(board, player1, player2) {
@@ -148,26 +143,21 @@ const Game = (function () {
         console.log(`${player.name} wins!`);
     }
 
-    function playerChoice(board) {
+    function playerChoice(player, board) {
         const availaboard = GameBoard.scan(board);
+        const mark = player.mark;
+        console.log(`PlayerMark: ${mark}`);
         let result = [];
 
-
         while (result.availability !== true) {
-            result = validate(Number(prompt()), availaboard);
+            result = validate(Number(prompt("Enter Position (number)",)), availaboard);
             console.log(result);
         }
 
-        // console.table(availaboard);
-        // result = validate(Number(prompt()), availaboard);
-        // console.log(result);
-
+        markBoard(board, mark, result.position);
 
         function validate(choice, board) {
             for (let i = 0; i < board.length; i++) {
-                console.log("THIS");
-                console.log(board[i]);
-
                 if (choice === board[i].position) {
                     return {
                         availability: true,
@@ -178,9 +168,20 @@ const Game = (function () {
 
             return {
                 availability: false,
-                position:null
+                position: null
             }
         }
+
+        function markBoard(board, mark, position) {
+            for (let i = 0; i < board.length; i++) {
+                if(board[i].position === position) {
+                    console.log("\n");
+                    console.log(board[i]);
+                    board[i].mark = mark;
+                }
+            }
+        }
+
     }
 
     return {
