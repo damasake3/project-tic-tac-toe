@@ -1,13 +1,13 @@
 const Game = (function () {
 
     function start() {
-        const board = GameBoard.test();
+        const board = GameBoard.init();
         const player1 = Players.init()[0];
         const player2 = Players.init()[1];
         let turn = 0;
 
 
-        playerChoice(player1, board);
+        playerChoice(player2, board);
         console.table(board);
     }
 
@@ -148,13 +148,26 @@ const Game = (function () {
         const mark = player.mark;
         console.log(`PlayerMark: ${mark}`);
         let result = [];
+        let RNG;
 
-        while (result.availability !== true) {
-            result = validate(Number(prompt("Enter Position (number)",)), availaboard);
-            console.log(result);
+        if (player.name === "Computer") {
+            console.log(`NAME ${player.name}`);
+            console.log("COMPUTER CHOICE");
+            while (result.availability !== true) {
+                RNG = Math.floor(Math.random() * 9);
+                result = validate(RNG, availaboard);
+                console.log(result);
+            }
+        }
+        else {
+            while (result.availability !== true) {
+                result = validate(Number(prompt("Enter Position (number)",)), availaboard);
+                console.log(result);
+            }
         }
 
         markBoard(board, mark, result.position);
+
 
         function validate(choice, board) {
             for (let i = 0; i < board.length; i++) {
@@ -174,7 +187,7 @@ const Game = (function () {
 
         function markBoard(board, mark, position) {
             for (let i = 0; i < board.length; i++) {
-                if(board[i].position === position) {
+                if (board[i].position === position) {
                     console.log("\n");
                     console.log(board[i]);
                     board[i].mark = mark;
