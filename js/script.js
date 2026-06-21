@@ -26,6 +26,12 @@ const gameBoard = (() => {
         return board;
     }
 
+    function reset(board) {
+        for (let i = 0; i < board.length; i++) {
+            board[i].mark = "";
+        }
+    }
+
     function display(board) {
         let temp = [];
         const between = "-----+-----+-----";
@@ -62,14 +68,16 @@ const gameBoard = (() => {
 
     return {
         init,
-        display
+        display,
+        reset
     }
     
 })();
 
 // Transfer these to the `Game=(()=>{})();` or `Player=(()=>{})();`later, if applicable. 
 const gameboard = gameBoard.init();
-console.log(gameboard);
-
+gameBoard.display(gameboard);
+console.log("\n");
+gameBoard.reset(gameboard);
 gameBoard.display(gameboard);
 
