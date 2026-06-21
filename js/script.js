@@ -66,10 +66,19 @@ const gameBoard = (() => {
 
     }
 
+    function mark(board, mark, position) {
+        for (let i = 0; i < board.length; i++) {
+            if (position === board[i].position && board[i].mark === "") {
+                board[i].mark = mark;
+            }
+        }
+    }
+
     return {
         init,
         display,
-        reset
+        reset,
+        mark
     }
     
 })();
@@ -77,7 +86,13 @@ const gameBoard = (() => {
 // Transfer these to the `Game=(()=>{})();` or `Player=(()=>{})();`later, if applicable. 
 const gameboard = gameBoard.init();
 gameBoard.display(gameboard);
+
 console.log("\n");
+
 gameBoard.reset(gameboard);
 gameBoard.display(gameboard);
 
+console.log("\n");
+
+gameBoard.mark(gameboard, "X", "center-center");
+gameBoard.display(gameboard);
