@@ -1,354 +1,98 @@
-const Game = (function () {
+const gameBoard = (() => {
 
-    function start() {
-        const board = GameBoard.init();
-        const player1 = Players.init()[0];
-        const player2 = Players.init()[1];
-        let turn = 0;
-        let winner;
+    // THE GAMEBOARD
+    //       *  |  *  |  *    1. Positions are exactly how it says in template = [{ postion:"position",... }
+    //     -----+-----+-----        * This is for mine own readability
+    //       *  |  *  |  *    2. Marks are either "O" or "X"
+    //     -----+-----+-----
+    //       *  |  *  |  *   
 
-        while (true) {
-            if (player1.score > 2 || player2 > 2) {
-                console.clear();
-                console.log(declareWinner(player1, player2));
-                printScore(player1, player2);
-                break;
-            }
-            else {
-                while (turn < 4) {
-                    playerChoice(player1, board)
-                    playerChoice(player2, board);
-                    winner = round(board, player1, player2);
-                    if (winner === true) {
-                        printScore(player1, player2);
-                        GameBoard.reset(board);
-                        turn = 0;
-                        break;
-                    }
-                    if (turn === 3 && winner !== true) {
-                        printScore(player1, player2);
-                        GameBoard.reset(board);
-                        turn = 0;
-                        break;
-                    }
-                    printScore(player1, player2);
-                    console.log(`\nWinner: ${winner}`);
-                    turn++;
-                }
-            }
-        }
-    }
+    const template =  [
+        { position: "top-left", mark: "" }, { position: "top-center", mark: "" }, { position: "top-right", mark: "" },
+        { position: "center-left", mark: "" }, { position: "center-center", mark: "" }, { position: "center-right", mark: "" },
+        { position: "bottom-left", mark: "" }, { position: "bottom-center", mark: "" }, { position: "bottom-right", mark: "" }
+    ]
 
-    function round(board, player1, player2) {
-        let winner = checkWin(board);
-        if (player1.mark === winner) {
-            playerScore(player1);
-            console.table(player1);
-            console.table(player2);
-            return true;
-        }
-        else if (player2.mark === winner) {
-            playerScore(player2);
-            console.table(player1);
-            console.table(player2);
-            return true;
-        }
-        else {
-            console.log("TIE");
-            console.table(player1);
-            console.table(player2);
-            return false;
-        }
+    const testTemplate = [
+        { position: "top-left", mark: "X" }, { position: "top-center", mark: "X" }, { position: "top-right", mark: "O" },
+        { position: "center-left", mark: "O" }, { position: "center-center", mark: "X" }, { position: "center-right", mark: "" },
+        { position: "bottom-left", mark: "X" }, { position: "bottom-center", mark: "O" }, { position: "bottom-right", mark: "O" }
+    ]
 
-        function checkWin(board) {
-            /*
-    
-                    0  |   1   |  2  
-                  -----+-------+-----
-                    3  |   4   |  5  
-                  -----+-------+-----
-                    6  |   7   |  8  
-    
-                    Checks      === Position Coordinates
-                                        WIN if either `OOO` or `XXX`, TIE/DRAW if N/A
-                Horizontal Checks:
-                    top-y       === 0,1,2
-                    center-y    === 3,4,5
-                    bottom-y    === 6,7,8
-                Vertical Checks:
-                    top-x       === 0,3,6
-                    center-x    === 1,4,7
-                    bottom-x    === 2,5,8
-                Diagonal Checks:
-                    left-xy     === 0,4,8
-                    right-xy    === 6,4,2
-    
-            */
-
-            // Top-Y
-            if (board[0].mark !== "" && board[1].mark !== "" && board[2].mark !== ""
-                && (board[0].mark === board[1].mark && board[1].mark === board[2].mark)) {
-                let winner = markOwner(board[0].mark);
-                console.log("TOP-Y Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[0].mark;
-            }
-            // Center-Y
-            else if (board[3].mark !== "" && board[4].mark !== "" && board[5].mark !== ""
-                && (board[3].mark === board[4].mark && board[4].mark === board[5].mark)) {
-                let winner = markOwner(board[3].mark);
-                console.log("CENTER-Y Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[3].mark;
-            }
-            // Bottom-Y
-            else if (board[6].mark !== "" && board[7].mark !== "" && board[8].mark !== ""
-                && (board[6].mark === board[7].mark && board[7].mark === board[8].mark)) {
-                let winner = markOwner(board[6].mark);
-                console.log("BOTTOM-Y Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[6].mark;
-            }
-            // Top-X
-            else if (board[0].mark !== "" && board[3].mark !== "" && board[6].mark !== ""
-                && (board[0].mark === board[3].mark && board[3].mark === board[6].mark)) {
-                let winner = markOwner(board[0].mark);
-                console.log("TOP-X Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[0].mark;
-            }
-            // Center-X
-            else if (board[1].mark !== "" && board[4].mark !== "" && board[7].mark !== ""
-                && (board[1].mark === board[4].mark && board[4].mark === board[7].mark)) {
-                let winner = markOwner(board[1].mark);
-                console.log("CENTER-X Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[1].mark;
-            }
-            // Bottom-X
-            else if (board[2].mark !== "" && board[5].mark !== "" && board[8].mark !== ""
-                && (board[2].mark === board[5].mark && board[5].mark === board[8].mark)) {
-                let winner = markOwner(board[2].mark);
-                console.log("BOTTOM-X Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[2].mark;
-            }
-            // Left-XY
-            else if (board[0].mark !== "" && board[4].mark !== "" && board[8].mark !== ""
-                && (board[0].mark === board[4].mark && board[4].mark === board[8].mark)) {
-                console.log(board[0].mark);
-                console.log(`MARKOWNER: ${markOwner(board[0].mark)}`)
-                let winner = markOwner(board[0].mark);
-                console.log("LEFT-XY Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[0].mark;
-            }
-            // Right-XY
-            else if (board[6].mark !== "" && board[4].mark !== "" && board[2].mark !== ""
-                && (board[6].mark === board[4].mark && board[4].mark === board[2].mark)) {
-                console.log(board[6].mark);
-                console.log(`MARKOWNER: ${markOwner(board[6].mark)}`)
-                let winner = markOwner(board[6].mark);
-                console.log("RIGHT-XY Victory!");
-                console.log(`Winner ${winner}!`);
-                return board[6].mark;
-            }
-
-            function markOwner(mark) {
-                if (mark === "O") {
-                    return "Player";
-                }
-                else if (mark === "X") {
-                    return "Computer";
-                }
-            }
-
-            console.table(board);
-            console.table(GameBoard.scan(board));
-
-        }
-    }
-
-    function playerScore(player) {
-        player.score++;
-        console.log(`${player.name} wins!`);
-    }
-
-    function declareWinner(player1, player2) {
-        if (player1.score > player2.score) {
-            return `${player1.name} WINS!`;
-        }
-        else {
-            return "YOU LOSE!";
-        }
-    }
-
-    function printScore(player1, player2) {
-        console.log("\n Player ScoreBoard");
-        console.log(player1);
-        console.log(player2);
-    }
-
-    function playerChoice(player, board) {
-        const availaboard = GameBoard.scan(board);
-        const mark = player.mark;
-        console.log(`PlayerMark: ${mark}`);
-        let result = [];
-        let RNG;
-
-        if (player.name === "Computer") {
-            console.log(`NAME ${player.name}`);
-            console.log("COMPUTER CHOICE");
-            while (result.availability !== true) {
-                RNG = Math.floor(Math.random() * 9);
-                result = validate(RNG, availaboard);
-                console.log(result);
-            }
-        }
-        else {
-            while (result.availability !== true) {
-                result = validate(Number(prompt("Enter Position (number)",)), availaboard);
-                console.log(result);
-            }
-        }
-
-        markBoard(board, mark, result.position);
-
-
-        function validate(choice, board) {
-            for (let i = 0; i < board.length; i++) {
-                if (choice === board[i].position) {
-                    return {
-                        availability: true,
-                        position: choice
-                    }
-                }
-            }
-
-            return {
-                availability: false,
-                position: null
-            }
-        }
-
-        function markBoard(board, mark, position) {
-            for (let i = 0; i < board.length; i++) {
-                if (board[i].position === position) {
-                    console.log("\n");
-                    console.log(board[i]);
-                    board[i].mark = mark;
-                }
-            }
-        }
-
-    }
-
-    return {
-        start
-    }
-
-})();
-
-const Players = (function () {
-    const players = [
-        { name: "Player", mark: "O", score: 0 },
-        { name: "Computer", mark: "X", score: 0 },
-    ];
+    const board = [];
 
     function init() {
-        return players;
-    }
-
-    return {
-        init
-    }
-})();
-
-const GameBoard = (function () {
-    const gameBoard = [];
-    function createTile(pos) {
-        return {
-            position: pos,
-            mark: ""
-        }
-    }
-
-    function createBoard() {
-        for (let i = 0; i < 9; i++) {
-            gameBoard.push(createTile(i));
-        }
-    }
-
-    function clearBoard() {
-        gameBoard.length = 0;
+        board.push(...testTemplate);
+        return board;
     }
 
     function reset(board) {
-        clearBoard(board);
-        createBoard(board);
+        for (let i = 0; i < board.length; i++) {
+            board[i].mark = "";
+        }
     }
 
-    function scan(board) {
-        let freeTiles = board.filter((tile) => {
-            return tile.mark === "";
-        });
+    function display(board) {
+        let temp = [];
+        const between = "-----+-----+-----";
 
-        return freeTiles;
-    }
-
-    function init() {
-        clearBoard();
-        createBoard();
-        return gameBoard;
-    }
-
-    function test() {
-        return [
-            {
-                "position": 0,
-                "mark": ""
-            },
-            {
-                "position": 1,
-                "mark": ""
-            },
-            {
-                "position": 2,
-                "mark": "O"
-            },
-            {
-                "position": 3,
-                "mark": "X"
-            },
-            {
-                "position": 4,
-                "mark": "O"
-            },
-            {
-                "position": 5,
-                "mark": "X"
-            },
-            {
-                "position": 6,
-                "mark": "O"
-            },
-            {
-                "position": 7,
-                "mark": ""
-            },
-            {
-                "position": 8,
-                "mark": ""
+        function check (boardMark){
+            if (boardMark === "") {
+                return "*";
             }
-        ]
+            else {
+                return boardMark;
+            }
+        }
+
+        // display by 3s in all rows followed by a in-betweener per row
+        //  - thru temp[], pushed, emptied it out then repeated as shown below
+        function create (board) {
+            for (let i = 0; i < board.length; i++) {
+                temp.push(check(board[i].mark));
+                if (i === 0) {
+                    console.log(between);
+                }
+                if (i === 2 || i === 5 || i === 8) {
+                    
+                    console.log(`  ${temp[0]}  |  ${temp[1]}  |  ${temp[2]}  `);
+                    console.log(between);
+                    temp = [];
+                }
+            }
+        }
+
+        create(board);
+
+    }
+
+    function mark(board, mark, position) {
+        for (let i = 0; i < board.length; i++) {
+            if (position === board[i].position && board[i].mark === "") {
+                board[i].mark = mark;
+            }
+        }
     }
 
     return {
         init,
+        display,
         reset,
-        scan,
-        test
+        mark
     }
+    
 })();
 
-Game.start();
+// Transfer these to the `Game=(()=>{})();` or `Player=(()=>{})();`later, if applicable. 
+const gameboard = gameBoard.init();
+gameBoard.display(gameboard);
+
+console.log("\n");
+
+gameBoard.reset(gameboard);
+gameBoard.display(gameboard);
+
+console.log("\n");
+
+gameBoard.mark(gameboard, "X", "center-center");
+gameBoard.display(gameboard);
