@@ -27,15 +27,8 @@ const gameBoard = (() => {
     }
 
     function display(board) {
-        let top, center, bot;
+        let temp = [];
         const between = "-----+-----+-----";
-
-        console.log(between);
-        console.log(`  ${check(board[0].mark)}  |  ${check(board[1].mark)}  |  ${check(board[2].mark)}  `);
-        console.log(between);
-        console.log(`  ${check(board[3].mark)}  |  ${check(board[4].mark)}  |  ${check(board[5].mark)}  `);
-        console.log(between);
-        console.log(`  ${check(board[6].mark)}  |  ${check(board[7].mark)}  |  ${check(board[8].mark)}  `);
 
         function check (boardMark){
             if (boardMark === "") {
@@ -45,6 +38,25 @@ const gameBoard = (() => {
                 return boardMark;
             }
         }
+
+        // display by 3s in all rows followed by a in-betweener per row
+        //  - thru temp[], pushed, emptied it out then repeated as shown below
+        function create (board) {
+            for (let i = 0; i < board.length; i++) {
+                temp.push(check(board[i].mark));
+                if (i === 0) {
+                    console.log(between);
+                }
+                if (i === 2 || i === 5 || i === 8) {
+                    
+                    console.log(`  ${temp[0]}  |  ${temp[1]}  |  ${temp[2]}  `);
+                    console.log(between);
+                    temp = [];
+                }
+            }
+        }
+
+        create(board);
 
     }
 
