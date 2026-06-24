@@ -7,7 +7,7 @@ const gameBoard = (() => {
     //     -----+-----+-----
     //       *  |  *  |  *   
 
-    const template =  [
+    const template = [
         { position: "top-left", mark: "" }, { position: "top-center", mark: "" }, { position: "top-right", mark: "" },
         { position: "center-left", mark: "" }, { position: "center-center", mark: "" }, { position: "center-right", mark: "" },
         { position: "bottom-left", mark: "" }, { position: "bottom-center", mark: "" }, { position: "bottom-right", mark: "" }
@@ -22,7 +22,7 @@ const gameBoard = (() => {
     const board = [];
 
     function init() {
-        board.push(...testTemplate);
+        board.push(...template);
         return board;
     }
 
@@ -36,7 +36,7 @@ const gameBoard = (() => {
         let temp = [];
         const between = "-----+-----+-----";
 
-        function check (boardMark){
+        function check(boardMark) {
             if (boardMark === "") {
                 return "*";
             }
@@ -47,14 +47,14 @@ const gameBoard = (() => {
 
         // display by 3s in all rows followed by a in-betweener per row
         //  - thru temp[], pushed, emptied it out then repeated as shown below
-        function create (board) {
+        function create(board) {
             for (let i = 0; i < board.length; i++) {
                 temp.push(check(board[i].mark));
                 if (i === 0) {
                     console.log(between);
                 }
                 if (i === 2 || i === 5 || i === 8) {
-                    
+
                     console.log(`  ${temp[0]}  |  ${temp[1]}  |  ${temp[2]}  `);
                     console.log(between);
                     temp = [];
@@ -80,19 +80,45 @@ const gameBoard = (() => {
         reset,
         mark
     }
-    
+
 })();
 
-// Transfer these to the `Game=(()=>{})();` or `Player=(()=>{})();`later, if applicable. 
-const gameboard = gameBoard.init();
-gameBoard.display(gameboard);
+const Players = (() => {
+    const template = [
+        {name:"Player1", mark:"X", score:0},
+        {name:"Player2", mark:"O", score:0}
+    ]
 
-console.log("\n");
+    const data = [];
 
-gameBoard.reset(gameboard);
-gameBoard.display(gameboard);
+    function init() {
+        data.push(...template);
+        return data;
+    }
 
-console.log("\n");
+    function display(data) {
+        console.table(data);
+    }
 
-gameBoard.mark(gameboard, "X", "center-center");
-gameBoard.display(gameboard);
+    return {
+        init,
+        display
+    }
+})();
+
+const gamePlay = (() => {
+    const gameboard = gameBoard.init();
+    const players = Players.init();
+    let turn = 0;
+
+    function game(){
+        gameBoard.display(gameboard);
+        Players.display(players);
+    }
+
+    return {
+        game
+    }
+})();
+
+gamePlay.game();
