@@ -32,18 +32,18 @@ const gameBoard = (() => {
         }
     }
 
+    function check(boardMark) {
+        if (boardMark === "") {
+            return "*";
+        }
+        else {
+            return boardMark;
+        }
+    }
+
     function display(board) {
         let temp = [];
         const between = "-----+-----+-----";
-
-        function check(boardMark) {
-            if (boardMark === "") {
-                return "*";
-            }
-            else {
-                return boardMark;
-            }
-        }
 
         // display by 3s in all rows followed by a in-betweener per row
         //  - thru temp[], pushed, emptied it out then repeated as shown below
@@ -85,8 +85,8 @@ const gameBoard = (() => {
 
 const Players = (() => {
     const template = [
-        {name:"Player1", mark:"X", score:0},
-        {name:"Player2", mark:"O", score:0}
+        { name: "Player1", mark: "X", score: 0 },
+        { name: "Player2", mark: "O", score: 0 }
     ]
 
     const data = [];
@@ -108,12 +108,42 @@ const Players = (() => {
 
 const gamePlay = (() => {
     const gameboard = gameBoard.init();
+
     const players = Players.init();
+    const player1 = players[0];
+    const player2 = players[1];
+
     let turn = 0;
 
-    function game(){
-        gameBoard.display(gameboard);
-        Players.display(players);
+    function game() {
+
+        round();
+
+        // A round is a players turn to mark a valid position from the board
+        // A round only ends when either player gets a win condition
+        // 9 rounds max per game
+        function round() {
+            display();
+            playerTurn(gameboard, player1.mark, getPosition());
+        }
+
+        function playerTurn(board, mark, position) {
+            gameBoard.mark(board, mark, position);
+            display();
+            turn++;
+        }
+
+        function getPosition() {
+            return prompt("Choose Position (Pick from gameboard template array)");
+        }
+
+
+        function display() {
+            console.clear();
+            gameBoard.display(gameboard);
+            Players.display(players);
+        }
+
     }
 
     return {
