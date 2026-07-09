@@ -113,24 +113,38 @@ const gamePlay = (() => {
     const player1 = players[0];
     const player2 = players[1];
 
-    let turn = 0;
+    let turnNumber = 0;
 
     function game() {
 
-        round();
+        for (let i = 0; i < 9; i++) {
+            turn();
+        }
 
-        // A round is a players turn to mark a valid position from the board
-        // A round only ends when either player gets a win condition
-        // 9 rounds max per game
-        function round() {
+        // A turn is a players turn to mark a valid position from the board
+        // A turn only ends when either player gets a win condition
+        // 9 turns max per game
+        function turn() {
             display();
-            playerTurn(gameboard, player1.mark, getPosition());
+            playerTurn(gameboard, checkTurn(turnNumber), getPosition());
         }
 
         function playerTurn(board, mark, position) {
             gameBoard.mark(board, mark, position);
             display();
-            turn++;
+            turnNumber++;
+        }
+
+        function checkTurn(turnNumber) {
+            if (turnNumber % 2 === 0) {
+                console.log("Player1's turn");
+                return player1.mark;
+            } else if (turnNumber % 2 !== 0) {
+                console.log("Player2's turn");
+                return player2.mark;
+            } else {
+                console.log("Something's wrong");
+            }
         }
 
         function getPosition() {
