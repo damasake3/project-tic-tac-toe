@@ -14,7 +14,7 @@ const gameBoard = (() => {
     ]
 
     const testTemplate = [
-        { position: "top-left", mark: "X" }, { position: "top-center", mark: "X" }, { position: "top-right", mark: "O" },
+        { position: "top-left", mark: "O" }, { position: "top-center", mark: "O" }, { position: "top-right", mark: "O" },
         { position: "center-left", mark: "O" }, { position: "center-center", mark: "X" }, { position: "center-right", mark: "" },
         { position: "bottom-left", mark: "X" }, { position: "bottom-center", mark: "O" }, { position: "bottom-right", mark: "O" }
     ]
@@ -121,6 +121,7 @@ const gamePlay = (() => {
         //     turn();
         // }
 
+        console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
         checkWin(gameboard);
 
         // A turn is a players turn to mark a valid position from the board
@@ -235,9 +236,18 @@ const gamePlay = (() => {
                     console.log(temp[2].mark);
                     if (temp[0].mark === temp[1].mark && temp[0].mark === temp[2].mark) {
                         console.log("WIN");
+                        score(temp[0].mark);
                         return true;
                     }
                     return false;
+
+                    function score(temp){
+                        if (temp === player1.mark) {
+                            player1.score++;
+                        } else if (temp === player2.mark) {
+                            player2.score++;
+                        }
+                    }
                 }
             }
         }
