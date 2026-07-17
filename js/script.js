@@ -22,7 +22,7 @@ const gameBoard = (() => {
     const board = [];
 
     function init() {
-        board.push(...testTemplate);
+        board.push(...template);
         return board;
     }
 
@@ -117,21 +117,22 @@ const gamePlay = (() => {
 
     function game() {
 
-        // for (let i = 0; i < 9; i++) {
-        //     turn();
-        // }
+        for (let i = 0; i < 9; i++) {
+            turn();
+            if (checkWin(gameboard) === true) {
+                break;
+            }
+        }
 
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
-        checkWin(gameboard);
 
         // A turn is a players turn to mark a valid position from the board
         // A turn only ends when either player gets a win condition
         // 9 turns max per game
-
-        // function turn() {
-        //     display();
-        //     playerTurn(gameboard, checkTurn(turnNumber), getPosition());
-        // }
+        function turn() {
+            display();
+            playerTurn(gameboard, checkTurn(turnNumber), getPosition());
+        }
 
         function playerTurn(board, mark, position) {
             gameBoard.mark(board, mark, position);
@@ -155,9 +156,11 @@ const gamePlay = (() => {
             let horizontalTemp = [];
             let verticalTemp = [];
             let diagonalTemp = [];
+            let result;
 
             scan(board);
             display(board);
+            return result;
 
             function scan(board) {
                 for (let i = 0; i < 9; i++){
@@ -189,7 +192,7 @@ const gamePlay = (() => {
 
                     if (horizontalTemp.length === 3) {
                         console.log("Horizontal Check");
-                        let result = isWin(horizontalTemp);
+                        result = isWin(horizontalTemp);
 
                         console.log(`isWin: ${result}`);
                         
@@ -203,7 +206,7 @@ const gamePlay = (() => {
 
                     if (verticalTemp.length === 3) {
                         console.log("Vertical Check");
-                        let result = isWin(verticalTemp);
+                        result = isWin(verticalTemp);
 
                         console.log(`isWin: ${result}`);
                         
@@ -216,7 +219,7 @@ const gamePlay = (() => {
 
                     if (diagonalTemp.length === 3) {
                         console.log("Diagonal Check");
-                        let result = isWin(diagonalTemp);
+                        result = isWin(diagonalTemp);
 
                         console.log(`isWin: ${result}`);
                         
@@ -234,7 +237,7 @@ const gamePlay = (() => {
                     console.log(temp[0].mark);
                     console.log(temp[1].mark);
                     console.log(temp[2].mark);
-                    if (temp[0].mark === temp[1].mark && temp[0].mark === temp[2].mark) {
+                    if (temp[0].mark === temp[1].mark && temp[0].mark === temp[2].mark && temp[0].mark !== "") {
                         console.log("WIN");
                         score(temp[0].mark);
                         return true;
@@ -250,6 +253,7 @@ const gamePlay = (() => {
                     }
                 }
             }
+            
         }
 
         function getPosition() {
