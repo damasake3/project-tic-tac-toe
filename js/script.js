@@ -122,15 +122,7 @@ const gamePlay = (() => {
 
         // display();
         // testPosition("center-center");
-        turn();
-
-        // A turn is a players turn to mark a valid position from the board
-        // A turn only ends when either player gets a win condition
-        // 9 turns max per game
-        function turn() {
-            display();
-            playerTurn(gameboard, checkTurn(turnNumber), getPosition());
-        }
+        play();
 
         function play() {
             for (let i = 0; i < 9; i++) {
@@ -139,6 +131,25 @@ const gamePlay = (() => {
                 if (checkWin(gameboard) === true) {
                     break;
                 }
+            }
+        }
+
+        // A turn is a players turn to mark a valid position from the board
+        // A turn only ends when either player gets a win condition
+        // 9 turns max per game
+        function turn() {
+            display();
+
+            // Mark  changes depending on turn Number
+            //  (i.e.: Player1 === even numbers && Player2 === Odd Numbers)
+            let mark = checkTurn(turnNumber);
+            let freePositions;
+
+            if (mark === player1.mark) {
+                playerTurn(gameboard, checkTurn(turnNumber), getPosition());
+            }
+            else if (mark === player2.mark) {
+                playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
             }
         }
 
@@ -283,6 +294,24 @@ const gamePlay = (() => {
                     }
                 }
             }
+        }
+
+        function getRandomPosition(board){
+            const freePositions = [];
+            let randomPick;
+
+            for (let i = 0; i < board.length; i++) {
+                console.log(board[i]);
+                if(board[i].mark==="") {
+                    console.log(board[i]);
+                    freePositions.push(board[i].position);
+
+                    randomPick = freePositions[Math.floor(Math.random() * freePositions.length)];
+                }
+            }
+
+            console.log(freePositions);
+            return randomPick;
         }
 
         function testPosition(position) {
