@@ -117,14 +117,12 @@ const gamePlay = (() => {
 
     function game() {
 
-        for (let i = 0; i < 9; i++) {
-            turn();
-            if (checkWin(gameboard) === true) {
-                break;
-            }
-        }
-
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
+        // play();
+
+        // display();
+        // testPosition("center-center");
+        turn();
 
         // A turn is a players turn to mark a valid position from the board
         // A turn only ends when either player gets a win condition
@@ -132,6 +130,16 @@ const gamePlay = (() => {
         function turn() {
             display();
             playerTurn(gameboard, checkTurn(turnNumber), getPosition());
+        }
+
+        function play() {
+            for (let i = 0; i < 9; i++) {
+                turn();
+                console.log(`Turn Number: ${turnNumber}`);
+                if (checkWin(gameboard) === true) {
+                    break;
+                }
+            }
         }
 
         function playerTurn(board, mark, position) {
@@ -163,7 +171,7 @@ const gamePlay = (() => {
             return result;
 
             function scan(board) {
-                for (let i = 0; i < 9; i++){
+                for (let i = 0; i < 9; i++) {
                     if (horizontalTemp.length < 3) {
                         horizontalTemp.push(board[i]);
                     }
@@ -171,22 +179,22 @@ const gamePlay = (() => {
                     if (verticalTemp.length < 3) {
                         if (i === 0 || i === 1 || i === 2) {
                             verticalTemp.push(board[i]);
-                            verticalTemp.push(board[i+3]);
-                            verticalTemp.push(board[i+3+3]);
+                            verticalTemp.push(board[i + 3]);
+                            verticalTemp.push(board[i + 3 + 3]);
                         }
                     }
 
                     if (diagonalTemp.length < 3) {
                         if (i === 0) {
                             diagonalTemp.push(board[i]);
-                            diagonalTemp.push(board[i+4]);
-                            diagonalTemp.push(board[i+4+4]);
+                            diagonalTemp.push(board[i + 4]);
+                            diagonalTemp.push(board[i + 4 + 4]);
                         }
 
                         if (i === 2) {
                             diagonalTemp.push(board[i]);
-                            diagonalTemp.push(board[i+2]);
-                            diagonalTemp.push(board[i+2+2]);
+                            diagonalTemp.push(board[i + 2]);
+                            diagonalTemp.push(board[i + 2 + 2]);
                         }
                     }
 
@@ -195,7 +203,7 @@ const gamePlay = (() => {
                         result = isWin(horizontalTemp);
 
                         console.log(`isWin: ${result}`);
-                        
+
                         if (result === true) {
                             break;
                         } else {
@@ -209,7 +217,7 @@ const gamePlay = (() => {
                         result = isWin(verticalTemp);
 
                         console.log(`isWin: ${result}`);
-                        
+
                         if (result === true) {
                             break;
                         } else {
@@ -222,7 +230,7 @@ const gamePlay = (() => {
                         result = isWin(diagonalTemp);
 
                         console.log(`isWin: ${result}`);
-                        
+
                         if (result === true) {
                             break;
                         } else {
@@ -244,7 +252,7 @@ const gamePlay = (() => {
                     }
                     return false;
 
-                    function score(temp){
+                    function score(temp) {
                         if (temp === player1.mark) {
                             player1.score++;
                         } else if (temp === player2.mark) {
@@ -253,13 +261,48 @@ const gamePlay = (() => {
                     }
                 }
             }
-            
+
         }
 
         function getPosition() {
-            return prompt("Choose Position (Pick from gameboard template array)");
+            let position;
+            let isFree = false;
+
+            while (isFree === false) {
+                position = prompt("Choose Position (Pick from gameboard template array)");
+                checkMark(position);
+            }
+
+            return position;
+
+            // check if position marked already
+            function checkMark(position) {
+                for (let i = 0; i < gameboard.length; i++) {
+                    if (gameboard[i].position === position && gameboard[i].mark === "") {
+                        isFree = true;
+                    }
+                }
+            }
         }
 
+        function testPosition(position) {
+            let isFree = false;
+            for (let i = 0; i < gameboard.length; i++) {
+                if (gameboard[i].position === position && gameboard[i].mark === "") {
+                    
+                    isFree = true;
+                } else {
+                    isFree = false;
+                }
+            }
+
+            if (isFree === false) {
+                console.log("FREE POSITION");
+                console.log(`${position} is free and unmarked`);
+            } else {
+                console.log("POSITION NOT FREE");
+            }
+        }
 
         function display() {
             // console.clear();
