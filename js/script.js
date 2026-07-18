@@ -118,13 +118,31 @@ const gamePlay = (() => {
     function game() {
 
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
-        // play();
+        play("Normal");
 
-        // display();
-        // testPosition("center-center");
-        play();
+        function play(mode){
+            let announce;
+            switch(mode) {
+                // Win by Three in a Row. No ties
+                case "Normal": {
+                    while (player1.score < 3 && player2.score < 3) {
+                        round();
+                    }
+                    console.log(checkChampion(player1.score, player2.score));
+                    break;
+                }
+                // Three Rounds. Winner has the biggest score in 3 rounds. Game may end in a Draw.
+                case "3Rounds": {
+                    for (let i = 0; i < 3; i++){
+                        round();
+                    }
+                    console.log(checkChampion(player1.score, player2.score));
+                    break;
+                }
+            }
+        }
 
-        function play() {
+        function round() {
             for (let i = 0; i < 9; i++) {
                 turn();
                 console.log(`Turn Number: ${turnNumber}`);
@@ -132,6 +150,9 @@ const gamePlay = (() => {
                     break;
                 }
             }
+
+            turnNumber = 0;
+            gameBoard.reset(gameboard);
         }
 
         // A turn is a players turn to mark a valid position from the board
@@ -171,6 +192,19 @@ const gamePlay = (() => {
             }
         }
 
+        // Check the Winner of a Play(Mode)
+        //   --> which consist of many Round()s
+        function checkChampion(player1, player2) {
+            if (player1 > player2) {
+                return "YOU WIN!";
+            } else if (player1 < player2) {
+                return "YOU LOSE!";
+            } else {
+                return "DRAW";
+            }
+        }
+
+        // Check the Winner of a Round()
         function checkWin(board) {
             let horizontalTemp = [];
             let verticalTemp = [];
