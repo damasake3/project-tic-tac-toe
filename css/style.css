@@ -32,3 +32,28 @@
     background-color: green;
 }
 
+.flex-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.player {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2em;
+}
+
+.player-name, .player-score {
+    font-size: 1.675rem;
+    font-weight: bold;
+}
+
+.player-score {
+    font-weight: normal;
+}
+
+.player-score {
+    color: black;
+}

@@ -85,14 +85,19 @@ const gameBoard = (() => {
 
 const Players = (() => {
     const template = [
-        { name: "Player1", mark: "X", score: 0 },
-        { name: "Player2", mark: "O", score: 0 }
+        { id: "player1", name: "Player1", mark: "X", score: 0 },
+        { id: "player2", name: "Player2", mark: "O", score: 0 }
+    ]
+
+    const testTemplate = [
+        { id: "player1", name: "Luke Skywalker", mark: "X", score: 99 },
+        { id: "player2", name: "Darth Vader", mark: "O", score: 69 }
     ]
 
     const data = [];
 
     function init() {
-        data.push(...template);
+        data.push(...testTemplate);
         return data;
     }
 
@@ -127,8 +132,51 @@ const gameScreen = (() => {
         });
     }
 
+    function renderPlayers(players) {
+        const player1 = document.getElementById("player1");
+        const player1Data = player1.querySelectorAll("*");
+
+        const player2 = document.getElementById("player2");
+        const player2Data = player2.querySelectorAll("*");
+
+        player1Data.forEach((item) => {
+            for (let i = 0; i < players.length; i++) {
+                if (players[i].id === "player1") {
+                    console.log(`data-name=${item.dataset.name}`);
+                    if (item.classList.contains("player-name")) {
+                        item.dataset.name = players[i].name;
+                        item.innerText = item.dataset.name;
+                    }
+
+                    if (item.classList.contains("player-score")) {
+                        item.dataset.score = players[i].score;
+                        item.innerText = item.dataset.score;
+                    }
+                }
+            }
+        });
+
+        player2Data.forEach((item) => {
+            for (let i = 0; i < players.length; i++) {
+                if (players[i].id === "player2") {
+                    console.log(`data-name=${item.dataset.name}`);
+                    if (item.classList.contains("player-name")) {
+                        item.dataset.name = players[i].name;
+                        item.innerText = item.dataset.name;
+                    }
+
+                    if (item.classList.contains("player-score")) {
+                        item.dataset.score = players[i].score;
+                        item.innerText = item.dataset.score;
+                    }
+                }
+            }
+        });
+    }
+
     return {
-        renderBoard
+        renderBoard,
+        renderPlayers
     }
 
 })();
@@ -138,6 +186,8 @@ const gamePlay = (() => {
     gameScreen.renderBoard(gameboard);
 
     const players = Players.init();
+    gameScreen.renderPlayers(players);
+
     const player1 = players[0];
     const player2 = players[1];
 
