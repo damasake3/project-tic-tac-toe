@@ -118,7 +118,7 @@ const gamePlay = (() => {
     function game() {
 
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
-        play("Normal");
+        // play("Normal");
 
         function play(mode){
             let announce;
@@ -381,3 +381,4 @@ const gamePlay = (() => {
 })();
 
 gamePlay.game();
+
