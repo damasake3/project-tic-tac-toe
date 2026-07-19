@@ -22,7 +22,7 @@ const gameBoard = (() => {
     const board = [];
 
     function init() {
-        board.push(...template);
+        board.push(...testTemplate);
         return board;
     }
 
@@ -106,8 +106,36 @@ const Players = (() => {
     }
 })();
 
+const gameScreen = (() => {
+    const ticTacBoard = document.getElementById("ticTacBoard");
+    const ticTacTiles = ticTacBoard.querySelectorAll("*");
+
+    // Using gameBoard's TestTemplate, gameboard should fill the UI with actual markings
+    // UnMarked Tiles will be filled with index number plus one as shown below
+    function renderBoard(gameboard) {
+        ticTacTiles.forEach((tile) => {
+            for (let i = 0; i < gameboard.length; i++) {
+                if (tile.dataset.position === gameboard[i].position) {
+                    tile.dataset.mark = gameboard[i].mark;
+                    tile.innerText = gameboard[i].mark;
+
+                    if (gameboard[i].mark === "") {
+                        tile.innerText = i + 1;
+                    }
+                }
+            }
+        });
+    }
+
+    return {
+        renderBoard
+    }
+
+})();
+
 const gamePlay = (() => {
     const gameboard = gameBoard.init();
+    gameScreen.renderBoard(gameboard);
 
     const players = Players.init();
     const player1 = players[0];
@@ -120,9 +148,9 @@ const gamePlay = (() => {
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
         // play("Normal");
 
-        function play(mode){
+        function play(mode) {
             let announce;
-            switch(mode) {
+            switch (mode) {
                 // Win by Three in a Row. No ties
                 case "Normal": {
                     while (player1.score < 3 && player2.score < 3) {
@@ -133,7 +161,7 @@ const gamePlay = (() => {
                 }
                 // Three Rounds. Winner has the biggest score in 3 rounds. Game may end in a Draw.
                 case "3Rounds": {
-                    for (let i = 0; i < 3; i++){
+                    for (let i = 0; i < 3; i++) {
                         round();
                     }
                     console.log(checkChampion(player1.score, player2.score));
@@ -330,13 +358,13 @@ const gamePlay = (() => {
             }
         }
 
-        function getRandomPosition(board){
+        function getRandomPosition(board) {
             const freePositions = [];
             let randomPick;
 
             for (let i = 0; i < board.length; i++) {
                 console.log(board[i]);
-                if(board[i].mark==="") {
+                if (board[i].mark === "") {
                     console.log(board[i]);
                     freePositions.push(board[i].position);
 
@@ -352,7 +380,7 @@ const gamePlay = (() => {
             let isFree = false;
             for (let i = 0; i < gameboard.length; i++) {
                 if (gameboard[i].position === position && gameboard[i].mark === "") {
-                    
+
                     isFree = true;
                 } else {
                     isFree = false;
