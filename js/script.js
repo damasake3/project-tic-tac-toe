@@ -97,7 +97,7 @@ const Players = (() => {
     const data = [];
 
     function init() {
-        data.push(...testTemplate);
+        data.push(...template);
         return data;
     }
 
@@ -139,9 +139,13 @@ const gameScreen = (() => {
         const player2 = document.getElementById("player2");
         const player2Data = player2.querySelectorAll("*");
 
-        player1Data.forEach((item) => {
+        render(player1Data, "player1");
+        render(player2Data, "player2");
+
+        function render(data, playerId) {
+            data.forEach((item) => {
             for (let i = 0; i < players.length; i++) {
-                if (players[i].id === "player1") {
+                if (players[i].id === playerId) {
                     console.log(`data-name=${item.dataset.name}`);
                     if (item.classList.contains("player-name")) {
                         item.dataset.name = players[i].name;
@@ -155,23 +159,7 @@ const gameScreen = (() => {
                 }
             }
         });
-
-        player2Data.forEach((item) => {
-            for (let i = 0; i < players.length; i++) {
-                if (players[i].id === "player2") {
-                    console.log(`data-name=${item.dataset.name}`);
-                    if (item.classList.contains("player-name")) {
-                        item.dataset.name = players[i].name;
-                        item.innerText = item.dataset.name;
-                    }
-
-                    if (item.classList.contains("player-score")) {
-                        item.dataset.score = players[i].score;
-                        item.innerText = item.dataset.score;
-                    }
-                }
-            }
-        });
+        }
     }
 
     return {
