@@ -97,7 +97,7 @@ const Players = (() => {
     const data = [];
 
     function init() {
-        data.push(...template);
+        data.push(...testTemplate);
         return data;
     }
 
@@ -144,37 +144,65 @@ const gameScreen = (() => {
 
         function render(data, playerId) {
             data.forEach((item) => {
-            for (let i = 0; i < players.length; i++) {
-                if (players[i].id === playerId) {
-                    console.log(`data-name=${item.dataset.name}`);
-                    if (item.classList.contains("player-name")) {
-                        item.dataset.name = players[i].name;
-                        item.innerText = item.dataset.name;
-                    }
+                for (let i = 0; i < players.length; i++) {
+                    if (players[i].id === playerId) {
+                        console.log(`data-name=${item.dataset.name}`);
+                        if (item.classList.contains("player-name")) {
+                            item.dataset.name = players[i].name;
+                            item.innerText = item.dataset.name;
+                        }
 
-                    if (item.classList.contains("player-score")) {
-                        item.dataset.score = players[i].score;
-                        item.innerText = item.dataset.score;
+                        if (item.classList.contains("player-score")) {
+                            item.dataset.score = players[i].score;
+                            item.innerText = item.dataset.score;
+                        }
                     }
+                }
+            });
+        }
+    }
+
+    function renderEvents() {
+        ticTacBoard.addEventListener("mouseover", (e) => {
+            let target = e.target;
+
+            if (target.classList.contains("grid-item")) {
+                if (target.dataset.mark === "") {
+                    console.log(`${target.dataset.position} is FREE`);
+                } else {
+                    console.log(`${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
                 }
             }
         });
-        }
+
+        ticTacBoard.addEventListener("click", (e) => {
+            let target = e.target;
+
+            if (target.classList.contains("grid-item")) {
+                if (target.dataset.mark === "") {
+                    console.log(`CLICKED! ${target.dataset.position} is FREE`);
+                } else {
+                    console.log(`CLICKED! ${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
+                }
+            }
+        });
     }
 
     return {
         renderBoard,
-        renderPlayers
+        renderPlayers,
+        renderEvents
     }
 
 })();
 
 const gamePlay = (() => {
     const gameboard = gameBoard.init();
-    gameScreen.renderBoard(gameboard);
-
     const players = Players.init();
+
+    gameScreen.renderBoard(gameboard);
     gameScreen.renderPlayers(players);
+    gameScreen.renderEvents();
 
     const player1 = players[0];
     const player2 = players[1];
