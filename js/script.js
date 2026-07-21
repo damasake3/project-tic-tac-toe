@@ -22,7 +22,7 @@ const gameBoard = (() => {
     const board = [];
 
     function init() {
-        board.push(...testTemplate);
+        board.push(...template);
         return board;
     }
 
@@ -97,7 +97,7 @@ const Players = (() => {
     const data = [];
 
     function init() {
-        data.push(...testTemplate);
+        data.push(...template);
         return data;
     }
 
@@ -162,6 +162,15 @@ const gameScreen = (() => {
         }
     }
 
+    return {
+        renderBoard,
+        renderPlayers,
+    }
+
+})();
+
+const gameController = (() => {
+
     function renderEvents() {
         ticTacBoard.addEventListener("mouseover", (e) => {
             let target = e.target;
@@ -186,23 +195,44 @@ const gameScreen = (() => {
                 }
             }
         });
+
+
+    }
+
+    function playerNaming(p) {
+        const player = p;
+        const nameBtn = document.getElementById("name-btn");
+        const playerName = document.getElementById("player-name");
+
+        nameBtn.addEventListener("click", (e) => {
+            let target = e.target;
+            e.preventDefault();
+
+            console.log(e);
+            console.log(playerName.value);
+            console.table(player);
+
+            if (playerName.value !== "") {
+                player.map(pl => {
+                if (pl.id === "player1"){
+                    pl.name = playerName.value
+                };
+            })
+            }
+            console.table(player);
+            gameScreen.renderPlayers(player);
+        });
     }
 
     return {
-        renderBoard,
-        renderPlayers,
-        renderEvents
+        renderEvents,
+        playerNaming
     }
-
 })();
 
 const gamePlay = (() => {
     const gameboard = gameBoard.init();
     const players = Players.init();
-
-    gameScreen.renderBoard(gameboard);
-    gameScreen.renderPlayers(players);
-    gameScreen.renderEvents();
 
     const player1 = players[0];
     const player2 = players[1];
@@ -469,10 +499,22 @@ const gamePlay = (() => {
 
     }
 
+    function start() {
+        gameController.playerNaming(players);
+
+        function init() {
+            console.log("Game Start");
+            gameScreen.renderBoard(gameboard);
+            gameScreen.renderPlayers(player1);
+            gameController.renderEvents();
+        }
+    }
+
     return {
-        game
+        game,
+        start
     }
 })();
 
-gamePlay.game();
+gamePlay.start();
 

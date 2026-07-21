@@ -57,3 +57,26 @@
 .player-score {
     color: black;
 }
+
+.btn {
+    cursor: pointer;
+}
+.dialog-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.buttons {
+    margin-top: 75%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 2em;
+}
+
+dialog#playerSetup {
+    width: 480px;
+    height:240px;
+}
