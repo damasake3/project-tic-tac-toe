@@ -22,7 +22,7 @@ const gameBoard = (() => {
     const board = [];
 
     function init() {
-        board.push(...template);
+        board.push(...testTemplate);
         return board;
     }
 
@@ -171,6 +171,17 @@ const gameScreen = (() => {
 
 const gameController = (() => {
 
+    function renderStart(gameboard, player1) {
+        const startBtn = document.getElementById("start-btn");
+        
+        startBtn.addEventListener("click", (e) => {
+            gameScreen.renderBoard(gameboard);
+            gameScreen.renderPlayers(player1);
+            gameController.renderEvents();
+            gamePlay.game();
+        });
+    }
+
     function renderEvents() {
         ticTacBoard.addEventListener("mouseover", (e) => {
             let target = e.target;
@@ -225,6 +236,7 @@ const gameController = (() => {
     }
 
     return {
+        renderStart,
         renderEvents,
         playerNaming
     }
@@ -501,13 +513,7 @@ const gamePlay = (() => {
 
     function start() {
         gameController.playerNaming(players);
-
-        function init() {
-            console.log("Game Start");
-            gameScreen.renderBoard(gameboard);
-            gameScreen.renderPlayers(player1);
-            gameController.renderEvents();
-        }
+        gameController.renderStart(gameboard, player1);
     }
 
     return {
