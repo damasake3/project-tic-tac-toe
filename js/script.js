@@ -115,6 +115,11 @@ const gameScreen = (() => {
     const ticTacBoard = document.getElementById("ticTacBoard");
     const ticTacTiles = ticTacBoard.querySelectorAll("*");
 
+    function refresh(gameboard, players) {
+        renderBoard(gameboard);
+        renderPlayers(players);
+    }
+
     // Using gameBoard's TestTemplate, gameboard should fill the UI with actual markings
     // UnMarked Tiles will be filled with index number plus one as shown below
     function renderBoard(gameboard) {
@@ -163,6 +168,7 @@ const gameScreen = (() => {
     }
 
     return {
+        refresh,
         renderBoard,
         renderPlayers,
     }
@@ -173,7 +179,7 @@ const gameController = (() => {
 
     function renderStart(gameboard, player1) {
         const startBtn = document.getElementById("start-btn");
-        
+
         startBtn.addEventListener("click", (e) => {
             gameScreen.renderBoard(gameboard);
             gameScreen.renderPlayers(player1);
@@ -225,10 +231,10 @@ const gameController = (() => {
 
             if (playerName.value !== "") {
                 player.map(pl => {
-                if (pl.id === "player1"){
-                    pl.name = playerName.value
-                };
-            })
+                    if (pl.id === "player1") {
+                        pl.name = playerName.value
+                    };
+                })
             }
             console.table(player);
             gameScreen.renderPlayers(player);
@@ -254,7 +260,8 @@ const gamePlay = (() => {
     function game() {
 
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
-        // play("Normal");
+        //play("Normal");
+        turn();
 
         function play(mode) {
             let announce;
@@ -308,6 +315,8 @@ const gamePlay = (() => {
             else if (mark === player2.mark) {
                 playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
             }
+
+            gameScreen.refresh(gameboard, players);
         }
 
         function playerTurn(board, mark, position) {
@@ -449,6 +458,7 @@ const gamePlay = (() => {
             let position;
             let isFree = false;
 
+            // Replace prompt with a button click on the physical gameboard
             while (isFree === false) {
                 position = prompt("Choose Position (Pick from gameboard template array)");
                 checkMark(position);
