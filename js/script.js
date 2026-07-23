@@ -184,7 +184,7 @@ const gameController = (() => {
             gameScreen.renderBoard(gameboard);
             gameScreen.renderPlayers(player1);
             gameController.renderEvents();
-            gamePlay.game();
+            console.log("Game Start");
         });
     }
 
@@ -315,7 +315,7 @@ const gamePlay = (() => {
         gameScreen.refresh(gameboard, players);
     }
 
-    function enemyTurn(){
+    function enemyTurn() {
         display();
         let mark = checkTurn(turnNumber);
 
@@ -362,183 +362,175 @@ const gamePlay = (() => {
         Players.display(players);
     }
 
-    function game() {
-
-        console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
-        //play("Normal");
-        //turn();
-
-        function play(mode) {
-            let announce;
-            switch (mode) {
-                // Win by Three in a Row. No ties
-                case "Normal": {
-                    while (player1.score < 3 && player2.score < 3) {
-                        round();
-                    }
-                    console.log(checkChampion(player1.score, player2.score));
-                    break;
+    function play(mode) {
+        let announce;
+        switch (mode) {
+            // Win by Three in a Row. No ties
+            case "Normal": {
+                while (player1.score < 3 && player2.score < 3) {
+                    round();
                 }
-                // Three Rounds. Winner has the biggest score in 3 rounds. Game may end in a Draw.
-                case "3Rounds": {
-                    for (let i = 0; i < 3; i++) {
-                        round();
-                    }
-                    console.log(checkChampion(player1.score, player2.score));
-                    break;
+                console.log(checkChampion(player1.score, player2.score));
+                break;
+            }
+            // Three Rounds. Winner has the biggest score in 3 rounds. Game may end in a Draw.
+            case "3Rounds": {
+                for (let i = 0; i < 3; i++) {
+                    round();
                 }
+                console.log(checkChampion(player1.score, player2.score));
+                break;
+            }
+        }
+    }
+
+    function round() {
+        for (let i = 0; i < 9; i++) {
+            turn();
+            console.log(`Turn Number: ${turnNumber}`);
+            if (checkWin(gameboard) === true) {
+                break;
             }
         }
 
-        function round() {
+        turnNumber = 0;
+        gameBoard.reset(gameboard);
+    }
+
+    // Check the Winner of a Play(Mode)
+    //   --> which consist of many Round()s
+    function checkChampion(player1, player2) {
+        if (player1 > player2) {
+            return "YOU WIN!";
+        } else if (player1 < player2) {
+            return "YOU LOSE!";
+        } else {
+            return "DRAW";
+        }
+    }
+
+    // Check the Winner of a Round()
+    function checkWin(board) {
+        let horizontalTemp = [];
+        let verticalTemp = [];
+        let diagonalTemp = [];
+        let result;
+
+        scan(board);
+        display(board);
+        return result;
+
+        function scan(board) {
             for (let i = 0; i < 9; i++) {
-                turn();
-                console.log(`Turn Number: ${turnNumber}`);
-                if (checkWin(gameboard) === true) {
-                    break;
+                if (horizontalTemp.length < 3) {
+                    horizontalTemp.push(board[i]);
                 }
+
+                if (verticalTemp.length < 3) {
+                    if (i === 0 || i === 1 || i === 2) {
+                        verticalTemp.push(board[i]);
+                        verticalTemp.push(board[i + 3]);
+                        verticalTemp.push(board[i + 3 + 3]);
+                    }
+                }
+
+                if (diagonalTemp.length < 3) {
+                    if (i === 0) {
+                        diagonalTemp.push(board[i]);
+                        diagonalTemp.push(board[i + 4]);
+                        diagonalTemp.push(board[i + 4 + 4]);
+                    }
+
+                    if (i === 2) {
+                        diagonalTemp.push(board[i]);
+                        diagonalTemp.push(board[i + 2]);
+                        diagonalTemp.push(board[i + 2 + 2]);
+                    }
+                }
+
+                if (horizontalTemp.length === 3) {
+                    console.log("Horizontal Check");
+                    result = isWin(horizontalTemp);
+
+                    console.log(`isWin: ${result}`);
+
+                    if (result === true) {
+                        break;
+                    } else {
+                        horizontalTemp.length = 0;
+                    }
+
+                }
+
+                if (verticalTemp.length === 3) {
+                    console.log("Vertical Check");
+                    result = isWin(verticalTemp);
+
+                    console.log(`isWin: ${result}`);
+
+                    if (result === true) {
+                        break;
+                    } else {
+                        verticalTemp.length = 0;
+                    }
+                }
+
+                if (diagonalTemp.length === 3) {
+                    console.log("Diagonal Check");
+                    result = isWin(diagonalTemp);
+
+                    console.log(`isWin: ${result}`);
+
+                    if (result === true) {
+                        break;
+                    } else {
+                        diagonalTemp.length = 0;
+                    }
+                }
+
             }
 
-            turnNumber = 0;
-            gameBoard.reset(gameboard);
+            function isWin(temp) {
+                // console.clear();
+                console.log(temp[0].mark);
+                console.log(temp[1].mark);
+                console.log(temp[2].mark);
+                if (temp[0].mark === temp[1].mark && temp[0].mark === temp[2].mark && temp[0].mark !== "") {
+                    console.log("WIN");
+                    score(temp[0].mark);
+                    return true;
+                }
+                return false;
+
+                function score(temp) {
+                    if (temp === player1.mark) {
+                        player1.score++;
+                    } else if (temp === player2.mark) {
+                        player2.score++;
+                    }
+                }
+            }
         }
 
-        // Check the Winner of a Play(Mode)
-        //   --> which consist of many Round()s
-        function checkChampion(player1, player2) {
-            if (player1 > player2) {
-                return "YOU WIN!";
-            } else if (player1 < player2) {
-                return "YOU LOSE!";
+    }
+
+    function testPosition(position) {
+        let isFree = false;
+        for (let i = 0; i < gameboard.length; i++) {
+            if (gameboard[i].position === position && gameboard[i].mark === "") {
+
+                isFree = true;
             } else {
-                return "DRAW";
+                isFree = false;
             }
         }
 
-        // Check the Winner of a Round()
-        function checkWin(board) {
-            let horizontalTemp = [];
-            let verticalTemp = [];
-            let diagonalTemp = [];
-            let result;
-
-            scan(board);
-            display(board);
-            return result;
-
-            function scan(board) {
-                for (let i = 0; i < 9; i++) {
-                    if (horizontalTemp.length < 3) {
-                        horizontalTemp.push(board[i]);
-                    }
-
-                    if (verticalTemp.length < 3) {
-                        if (i === 0 || i === 1 || i === 2) {
-                            verticalTemp.push(board[i]);
-                            verticalTemp.push(board[i + 3]);
-                            verticalTemp.push(board[i + 3 + 3]);
-                        }
-                    }
-
-                    if (diagonalTemp.length < 3) {
-                        if (i === 0) {
-                            diagonalTemp.push(board[i]);
-                            diagonalTemp.push(board[i + 4]);
-                            diagonalTemp.push(board[i + 4 + 4]);
-                        }
-
-                        if (i === 2) {
-                            diagonalTemp.push(board[i]);
-                            diagonalTemp.push(board[i + 2]);
-                            diagonalTemp.push(board[i + 2 + 2]);
-                        }
-                    }
-
-                    if (horizontalTemp.length === 3) {
-                        console.log("Horizontal Check");
-                        result = isWin(horizontalTemp);
-
-                        console.log(`isWin: ${result}`);
-
-                        if (result === true) {
-                            break;
-                        } else {
-                            horizontalTemp.length = 0;
-                        }
-
-                    }
-
-                    if (verticalTemp.length === 3) {
-                        console.log("Vertical Check");
-                        result = isWin(verticalTemp);
-
-                        console.log(`isWin: ${result}`);
-
-                        if (result === true) {
-                            break;
-                        } else {
-                            verticalTemp.length = 0;
-                        }
-                    }
-
-                    if (diagonalTemp.length === 3) {
-                        console.log("Diagonal Check");
-                        result = isWin(diagonalTemp);
-
-                        console.log(`isWin: ${result}`);
-
-                        if (result === true) {
-                            break;
-                        } else {
-                            diagonalTemp.length = 0;
-                        }
-                    }
-
-                }
-
-                function isWin(temp) {
-                    // console.clear();
-                    console.log(temp[0].mark);
-                    console.log(temp[1].mark);
-                    console.log(temp[2].mark);
-                    if (temp[0].mark === temp[1].mark && temp[0].mark === temp[2].mark && temp[0].mark !== "") {
-                        console.log("WIN");
-                        score(temp[0].mark);
-                        return true;
-                    }
-                    return false;
-
-                    function score(temp) {
-                        if (temp === player1.mark) {
-                            player1.score++;
-                        } else if (temp === player2.mark) {
-                            player2.score++;
-                        }
-                    }
-                }
-            }
-
+        if (isFree === false) {
+            console.log("FREE POSITION");
+            console.log(`${position} is free and unmarked`);
+        } else {
+            console.log("POSITION NOT FREE");
         }
-
-        function testPosition(position) {
-            let isFree = false;
-            for (let i = 0; i < gameboard.length; i++) {
-                if (gameboard[i].position === position && gameboard[i].mark === "") {
-
-                    isFree = true;
-                } else {
-                    isFree = false;
-                }
-            }
-
-            if (isFree === false) {
-                console.log("FREE POSITION");
-                console.log(`${position} is free and unmarked`);
-            } else {
-                console.log("POSITION NOT FREE");
-            }
-        }
-
     }
 
     function start() {
@@ -547,7 +539,6 @@ const gamePlay = (() => {
     }
 
     return {
-        game,
         start,
         getPosition,
         turn,
