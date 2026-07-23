@@ -22,7 +22,7 @@ const gameBoard = (() => {
     const board = [];
 
     function init() {
-        board.push(...testTemplate);
+        board.push(...template);
         return board;
     }
 
@@ -203,16 +203,21 @@ const gameController = (() => {
 
         ticTacBoard.addEventListener("click", (e) => {
             let target = e.target;
-
+            let clickPosition;
             if (target.classList.contains("grid-item")) {
                 if (target.dataset.mark === "") {
+                    // turn(clickPosition) => playerTurn
+                    //  (gameboard, checkTurn(turnNumber)) =>
+                    //   gameScreen.refresh(gameboard, players);
+
                     console.log(`CLICKED! ${target.dataset.position} is FREE`);
+                    clickPosition = gamePlay.getPosition(target.dataset.position);
+                    gamePlay.turn(clickPosition);
                 } else {
                     console.log(`CLICKED! ${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
                 }
             }
         });
-
 
     }
 
@@ -257,11 +262,100 @@ const gamePlay = (() => {
 
     let turnNumber = 0;
 
+    function getPosition(clickPosition) {
+        let position = clickPosition;
+        let isFree = false;
+
+        // Replace prompt with a button click on the physical gameboard
+        // while (isFree === false) {
+        //     position = prompt("Choose Position (Pick from gameboard template array)");
+        //     checkMark(position);
+        // }
+
+        console.log("HERE");
+        console.log(position);
+
+        return position;
+
+        // check if position marked already
+        function checkMark(position) {
+            for (let i = 0; i < gameboard.length; i++) {
+                if (gameboard[i].position === position && gameboard[i].mark === "") {
+                    isFree = true;
+                }
+            }
+        }
+    }
+
+    function playerTurn(board, mark, position) {
+        gameBoard.mark(board, mark, position);
+        display();
+        turnNumber++;
+    }
+
+    // A turn is a players turn to mark a valid position from the board
+    // A turn only ends when either player gets a win condition
+    // 9 turns max per game
+    function turn(position) {
+        display();
+
+        // Mark  changes depending on turn Number
+        //  (i.e.: Player1 === even numbers && Player2 === Odd Numbers)
+        let mark = checkTurn(turnNumber);
+        console.log(`FROM TURN(POSITION)\n\n${mark}`);
+
+        if (mark === player1.mark) {
+            playerTurn(gameboard, checkTurn(turnNumber), position);
+        }
+        else if (mark === player2.mark) {
+            playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
+        }
+
+        gameScreen.refresh(gameboard, players);
+    }
+
+    function checkTurn(turnNumber) {
+        console.log("HERE!!!!!");
+        if (turnNumber % 2 === 0) {
+            console.log("Player1's turn");
+            return player1.mark;
+        } else if (turnNumber % 2 !== 0) {
+            console.log("Player2's turn");
+            return player2.mark;
+        } else {
+            console.log("Something's wrong");
+        }
+    }
+
+    function getRandomPosition(board) {
+        const freePositions = [];
+        let randomPick;
+
+        for (let i = 0; i < board.length; i++) {
+            console.log(board[i]);
+            if (board[i].mark === "") {
+                console.log(board[i]);
+                freePositions.push(board[i].position);
+
+                randomPick = freePositions[Math.floor(Math.random() * freePositions.length)];
+            }
+        }
+
+        console.log(freePositions);
+        return randomPick;
+    }
+
+    function display() {
+        // console.clear();
+        gameBoard.display(gameboard);
+        Players.display(players);
+    }
+
     function game() {
 
         console.log(`Player1: ${player1.name}, Mark: ${player1.mark}`);
         //play("Normal");
-        turn();
+        //turn();
 
         function play(mode) {
             let announce;
@@ -296,45 +390,6 @@ const gamePlay = (() => {
 
             turnNumber = 0;
             gameBoard.reset(gameboard);
-        }
-
-        // A turn is a players turn to mark a valid position from the board
-        // A turn only ends when either player gets a win condition
-        // 9 turns max per game
-        function turn() {
-            display();
-
-            // Mark  changes depending on turn Number
-            //  (i.e.: Player1 === even numbers && Player2 === Odd Numbers)
-            let mark = checkTurn(turnNumber);
-            let freePositions;
-
-            if (mark === player1.mark) {
-                playerTurn(gameboard, checkTurn(turnNumber), getPosition());
-            }
-            else if (mark === player2.mark) {
-                playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
-            }
-
-            gameScreen.refresh(gameboard, players);
-        }
-
-        function playerTurn(board, mark, position) {
-            gameBoard.mark(board, mark, position);
-            display();
-            turnNumber++;
-        }
-
-        function checkTurn(turnNumber) {
-            if (turnNumber % 2 === 0) {
-                console.log("Player1's turn");
-                return player1.mark;
-            } else if (turnNumber % 2 !== 0) {
-                console.log("Player2's turn");
-                return player2.mark;
-            } else {
-                console.log("Something's wrong");
-            }
         }
 
         // Check the Winner of a Play(Mode)
@@ -454,46 +509,6 @@ const gamePlay = (() => {
 
         }
 
-        function getPosition() {
-            let position;
-            let isFree = false;
-
-            // Replace prompt with a button click on the physical gameboard
-            while (isFree === false) {
-                position = prompt("Choose Position (Pick from gameboard template array)");
-                checkMark(position);
-            }
-
-            return position;
-
-            // check if position marked already
-            function checkMark(position) {
-                for (let i = 0; i < gameboard.length; i++) {
-                    if (gameboard[i].position === position && gameboard[i].mark === "") {
-                        isFree = true;
-                    }
-                }
-            }
-        }
-
-        function getRandomPosition(board) {
-            const freePositions = [];
-            let randomPick;
-
-            for (let i = 0; i < board.length; i++) {
-                console.log(board[i]);
-                if (board[i].mark === "") {
-                    console.log(board[i]);
-                    freePositions.push(board[i].position);
-
-                    randomPick = freePositions[Math.floor(Math.random() * freePositions.length)];
-                }
-            }
-
-            console.log(freePositions);
-            return randomPick;
-        }
-
         function testPosition(position) {
             let isFree = false;
             for (let i = 0; i < gameboard.length; i++) {
@@ -513,12 +528,6 @@ const gamePlay = (() => {
             }
         }
 
-        function display() {
-            // console.clear();
-            gameBoard.display(gameboard);
-            Players.display(players);
-        }
-
     }
 
     function start() {
@@ -528,7 +537,9 @@ const gamePlay = (() => {
 
     return {
         game,
-        start
+        start,
+        getPosition,
+        turn
     }
 })();
 
