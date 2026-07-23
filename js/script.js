@@ -213,6 +213,7 @@ const gameController = (() => {
                     console.log(`CLICKED! ${target.dataset.position} is FREE`);
                     clickPosition = gamePlay.getPosition(target.dataset.position);
                     gamePlay.turn(clickPosition);
+                    gamePlay.enemyTurn();
                 } else {
                     console.log(`CLICKED! ${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
                 }
@@ -307,9 +308,19 @@ const gamePlay = (() => {
         if (mark === player1.mark) {
             playerTurn(gameboard, checkTurn(turnNumber), position);
         }
-        else if (mark === player2.mark) {
-            playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
-        }
+        // else if (mark === player2.mark) {
+        //     playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
+        // }
+
+        gameScreen.refresh(gameboard, players);
+    }
+
+    function enemyTurn(){
+        display();
+        let mark = checkTurn(turnNumber);
+
+        console.log(`FROM TURN(POSITION)\n\n${mark}`);
+        playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
 
         gameScreen.refresh(gameboard, players);
     }
@@ -539,7 +550,8 @@ const gamePlay = (() => {
         game,
         start,
         getPosition,
-        turn
+        turn,
+        enemyTurn
     }
 })();
 
