@@ -74,11 +74,28 @@ const gameBoard = (() => {
         }
     }
 
+    function get(x) {
+        if (x === "board") {
+            return board;
+        } else if (x === "boardLength") {
+            return board.length;
+        } else if (x === "freeTiles") {
+            let result = Number(board.length);
+            for (let i = 0; i < board.length; i++) {
+                if (board[i].mark !== "") {
+                    result--;
+                }
+            }
+            return result;
+        }
+    }
+
     return {
         init,
         display,
         reset,
-        mark
+        mark,
+        get
     }
 
 })();
@@ -204,18 +221,49 @@ const gameController = (() => {
         ticTacBoard.addEventListener("click", (e) => {
             let target = e.target;
             let clickPosition;
+            let boardLength = gameBoard.get("boardLength");
+            let turnNumber = boardLength - gameBoard.get("freeTiles");
+
             if (target.classList.contains("grid-item")) {
                 if (target.dataset.mark === "") {
                     // turn(clickPosition) => playerTurn
                     //  (gameboard, checkTurn(turnNumber)) =>
                     //   gameScreen.refresh(gameboard, players);
 
-                    console.log(`CLICKED! ${target.dataset.position} is FREE`);
+                    // console.log(`CLICKED! ${target.dataset.position} is FREE`);
+                    // console.table(gameBoard.get("board"));
+                    // console.log(boardLength);
+                    // console.log(turnNumber);
                     clickPosition = gamePlay.getPosition(target.dataset.position);
-                    gamePlay.turn(clickPosition);
-                    gamePlay.enemyTurn();
+                    // gamePlay.turn(clickPosition, gamePlay.turnNumber);
+                    encounter(clickPosition, turnNumber);
+
                 } else {
                     console.log(`CLICKED! ${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
+                }
+            }
+
+            function encounter(clickPosition, turnNumber) {
+                console.log(`turnNumber: ${turnNumber}`);
+                console.log(`clickPosition ${clickPosition}`);
+
+                switch (gamePlay.turn(clickPosition, turnNumber) === true) {
+                    case true:
+                        console.log("wala na finish na");
+                        break;
+                    case false:
+                        console.log(turnNumber);
+                        console.log("Pildi player1");
+                        switch (gamePlay.enemyTurn(turnNumber) === true) {
+                            case true:
+                                console.log(turnNumber);
+                                console.log("Ah wala pildi ka boss");
+                                break;
+                            case false:
+                                console.log(turnNumber);
+                                console.log("Ah way daog uli namo haha");
+                                break;
+                        }
                 }
             }
         });
@@ -291,13 +339,14 @@ const gamePlay = (() => {
     function playerTurn(board, mark, position) {
         gameBoard.mark(board, mark, position);
         display();
-        turnNumber++;
+        //Still using the outdated turnNumber
+        //turnNumber++;
     }
 
     // A turn is a players turn to mark a valid position from the board
     // A turn only ends when either player gets a win condition
     // 9 turns max per game
-    function turn(position) {
+    function turn(position, turnNumber) {
         display();
 
         // Mark  changes depending on turn Number
@@ -307,26 +356,47 @@ const gamePlay = (() => {
 
         if (mark === player1.mark) {
             playerTurn(gameboard, checkTurn(turnNumber), position);
+            if (checkWin(gameboard) === true) {
+                // Display Winner GUI
+                console.log("WIN");
+                gameScreen.refresh(gameboard, players);
+                return true;
+            }
+        } else if (mark === player2.mark) {
+            playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
+            if (checkWin(gameboard) === true) {
+                // Display Winner GUI
+                console.log("WIN");
+                gameScreen.refresh(gameboard, players);
+                return true
+            }
+        } else {
+            gameScreen.refresh(gameboard, players);
+            return false;
         }
-        // else if (mark === player2.mark) {
-        //     playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
-        // }
 
         gameScreen.refresh(gameboard, players);
     }
 
-    function enemyTurn() {
+    function enemyTurn(turnNumber) {
         display();
-        let mark = checkTurn(turnNumber);
+        let mark = checkTurn(turnNumber++);
 
         console.log(`FROM TURN(POSITION)\n\n${mark}`);
         playerTurn(gameboard, checkTurn(turnNumber), getRandomPosition(gameboard));
+
+        if (checkWin(gameboard) === true) {
+            // Display Winner GUI
+            console.log("WIN");
+            gameScreen.refresh(gameboard, players);
+            return true;
+        }
 
         gameScreen.refresh(gameboard, players);
     }
 
     function checkTurn(turnNumber) {
-        console.log("HERE!!!!!");
+        console.log(`checkTurn(${turnNumber})`);
         if (turnNumber % 2 === 0) {
             console.log("Player1's turn");
             return player1.mark;
@@ -542,7 +612,8 @@ const gamePlay = (() => {
         start,
         getPosition,
         turn,
-        enemyTurn
+        enemyTurn,
+        turnNumber
     }
 })();
 
