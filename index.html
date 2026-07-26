@@ -39,6 +39,7 @@
 
             <div class="flex-container buttons">
                 <button class="btn" command="show-modal" commandfor="playerSetup">Setup</button>
+                <button class="btn" command="show-modal" commandfor="victoryModal">Test</button>
                 <button class="btn" id="start-btn">Play</button>
             </div>
         </div>
@@ -55,8 +56,17 @@
 
             <button type="submit" class="btn" id="name-btn">Enter Name</button>
         </form>
-        
+
         <button class="btn dialog-close" command="close" commandfor="playerSetup">X</button>
+    </dialog>
+
+    <dialog id="victoryModal">
+        <!--YOU WIN, YOU LOSE, TIE-->
+        <div class="dialog-contents">
+            <h3 id="victory-message">Message</h3>
+            <button class="btn dialog-close" command="close" commandfor="victoryModal">X</button>
+            <button class="btn dialog-close-text" command="close" commandfor="victoryModal">close</button>
+        </div>
     </dialog>
 
     <script src="js/script.js"></script>

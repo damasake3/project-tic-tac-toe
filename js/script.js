@@ -132,6 +132,9 @@ const gameScreen = (() => {
     const ticTacBoard = document.getElementById("ticTacBoard");
     const ticTacTiles = ticTacBoard.querySelectorAll("*");
 
+    const victoryModal = document.getElementById("victoryModal")
+    const victoryMessage = document.getElementById("victory-message");
+
     function refresh(gameboard, players) {
         renderBoard(gameboard);
         renderPlayers(players);
@@ -184,10 +187,25 @@ const gameScreen = (() => {
         }
     }
 
+    // Show Winner of a Round
+    function showVictory(message) {
+        victoryModal.showModal();
+
+        if (message === "win") {
+            victoryMessage.innerText = "YOU WIN";
+        } else if(message === "lose") {
+            victoryMessage.innerText = "YOU LOSE";
+        } else if(message === "draw") {
+            victoryMessage.innerText = "DRAW";
+        }
+    }
+
     return {
         refresh,
         renderBoard,
         renderPlayers,
+        showVictory,
+
     }
 
 })();
@@ -226,44 +244,10 @@ const gameController = (() => {
 
             if (target.classList.contains("grid-item")) {
                 if (target.dataset.mark === "") {
-                    // turn(clickPosition) => playerTurn
-                    //  (gameboard, checkTurn(turnNumber)) =>
-                    //   gameScreen.refresh(gameboard, players);
-
-                    // console.log(`CLICKED! ${target.dataset.position} is FREE`);
-                    // console.table(gameBoard.get("board"));
-                    // console.log(boardLength);
-                    // console.log(turnNumber);
                     clickPosition = gamePlay.getPosition(target.dataset.position);
-                    // gamePlay.turn(clickPosition, gamePlay.turnNumber);
-                    encounter(clickPosition, turnNumber);
-
+                    gamePlay.encounter(clickPosition, turnNumber);
                 } else {
                     console.log(`CLICKED! ${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
-                }
-            }
-
-            function encounter(clickPosition, turnNumber) {
-                console.log(`turnNumber: ${turnNumber}`);
-                console.log(`clickPosition ${clickPosition}`);
-
-                switch (gamePlay.turn(clickPosition, turnNumber) === true) {
-                    case true:
-                        console.log("wala na finish na");
-                        break;
-                    case false:
-                        console.log(turnNumber);
-                        console.log("Pildi player1");
-                        switch (gamePlay.enemyTurn(turnNumber) === true) {
-                            case true:
-                                console.log(turnNumber);
-                                console.log("Ah wala pildi ka boss");
-                                break;
-                            case false:
-                                console.log(turnNumber);
-                                console.log("Ah way daog uli namo haha");
-                                break;
-                        }
                 }
             }
         });
@@ -309,7 +293,25 @@ const gamePlay = (() => {
     const player1 = players[0];
     const player2 = players[1];
 
-    let turnNumber = 0;
+    function encounter(clickPosition, turnNumber) {
+        console.log(`turnNumber: ${turnNumber}`);
+        console.log(`clickPosition ${clickPosition}`);
+
+        switch (gamePlay.turn(clickPosition, turnNumber) === true) {
+            case true:
+                break;
+            case false:
+                console.log(turnNumber);
+                switch (gamePlay.enemyTurn(turnNumber) === true) {
+                    case true:
+                        console.log(turnNumber);
+                        break;
+                    case false:
+                        console.log(turnNumber);
+                        break;
+                }
+        }
+    }
 
     function getPosition(clickPosition) {
         let position = clickPosition;
@@ -569,14 +571,18 @@ const gamePlay = (() => {
                     console.log("WIN");
                     score(temp[0].mark);
                     return true;
+                } else if (gameBoard.get("freeTiles") === 0){
+                    gameScreen.showVictory("draw");
                 }
                 return false;
 
                 function score(temp) {
                     if (temp === player1.mark) {
                         player1.score++;
+                        gameScreen.showVictory("win");
                     } else if (temp === player2.mark) {
                         player2.score++;
+                        gameScreen.showVictory("lose");
                     }
                 }
             }
@@ -613,7 +619,7 @@ const gamePlay = (() => {
         getPosition,
         turn,
         enemyTurn,
-        turnNumber
+        encounter
     }
 })();
 

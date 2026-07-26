@@ -76,7 +76,17 @@
     gap: 2em;
 }
 
-dialog#playerSetup {
+dialog#playerSetup, dialog#victoryModal {
     width: 480px;
     height:240px;
 }
+
+dialog#victoryModal .dialog-contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+}
+
