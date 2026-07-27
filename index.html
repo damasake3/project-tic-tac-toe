@@ -10,6 +10,71 @@
 </head>
 
 <body>
+    <div class="main-container">
+
+        <div class="grid-container" id="ticTacBoard">
+            <div class="grid-item" data-position="top-left" data-mark="">1</div>
+            <div class="grid-item" data-position="top-center" data-mark="">2</div>
+            <div class="grid-item" data-position="top-right" data-mark="">3</div>
+            <div class="grid-item" data-position="center-left" data-mark="">4</div>
+            <div class="grid-item" data-position="center-center" data-mark="">5</div>
+            <div class="grid-item" data-position="center-right" data-mark="">6</div>
+            <div class="grid-item" data-position="bottom-left" data-mark="">7</div>
+            <div class="grid-item" data-position="bottom-center" data-mark="">8</div>
+            <div class="grid-item" data-position="bottom-right" data-mark="">9</div>
+        </div>
+
+        <div class="flex-container">
+            <h1>Project TicTacToe</h1>
+
+            <div class="player" id="player1">
+                <div class="player-item player-name" data-name="">Player1</div>
+                <div class="player-item player-score" data-score="">0</div>
+            </div>
+
+            <div class="player" id="player2">
+                <div class="player-item player-name" data-name="">Player2</div>
+                <div class="player-item player-score" data-score="">0</div>
+            </div>
+
+            <div class="flex-container buttons">
+                <button class="btn" command="show-modal" commandfor="playerSetup">Setup</button>
+                <button class="btn" id="start-btn">Play</button>
+                <button class="btn" id="restart-btn">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <dialog id="playerSetup">
+
+        <h2>Player Setup</h2>
+        <form action="">
+            <p>
+                <label for="player-name">Player Name:</label>
+                <input type="text" id="player-name">
+            </p>
+
+            <button type="submit" class="btn" id="name-btn">Enter Name</button>
+        </form>
+
+        <button class="btn dialog-close" command="close" commandfor="playerSetup">X</button>
+    </dialog>
+
+    <dialog id="victoryModal">
+        <!--YOU WIN, YOU LOSE, TIE-->
+        <div class="dialog-contents">
+            <h3 id="victory-message">Message</h3>
+            
+            <div class="dialog-choices" id="dialog-choices">
+                <button class="btn dialog-restart" id="victory-restart" command="close" commandfor="victoryModal">Restart</button>
+                <button class="btn next-round" id="next-round">Next Round</buttn>
+                <button class="btn dialog-close" id="victory-close" command="close" commandfor="victoryModal">X</button>
+            </div>
+            
+            
+        </div>
+    </dialog>
+
     <script src="js/script.js"></script>
 </body>
 
