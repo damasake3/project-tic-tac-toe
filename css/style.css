@@ -33,14 +33,20 @@
     font-size:xxx-large
 }
 
-[data-mark|="X"] {
-    background-color: blue;
-    color: white;
+.grid-item:hover {
+    cursor:pointer;
 }
 
-[data-mark|="O"] {
+.grid-item[data-mark|="X"] {
+    background-color: blue;
+    color: white;
+    cursor: not-allowed;
+}
+
+.grid-item[data-mark|="O"] {
     background-color: red;
     color: white;
+    cursor: not-allowed;
 }
 
 .flex-container {
