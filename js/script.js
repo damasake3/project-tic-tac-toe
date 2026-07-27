@@ -139,9 +139,15 @@ const gameScreen = (() => {
     const dialogChoices = document.getElementById("dialog-choices");
     const nextRound = document.getElementById("next-round");
 
+    const restartBtn = document.getElementById("restart-btn");
+
     function refresh(gameboard, players) {
         renderBoard(gameboard);
         renderPlayers(players);
+    }
+
+    function restart(){
+        window.location.reload();
     }
 
     // Using gameBoard's TestTemplate, gameboard should fill the UI with actual markings
@@ -210,12 +216,14 @@ const gameScreen = (() => {
 
     return {
         refresh,
+        restart,
         renderBoard,
         renderPlayers,
         showVictory,
         closeVictory,
 
-        dialogChoices
+        dialogChoices,
+        restartBtn
     }
 
 })();
@@ -276,7 +284,18 @@ const gameController = (() => {
                 console.log("BATTLE");
                 gamePlay.nextRound();
             }
+            if (target.id === "victory-restart" || target.id === "victory-close") {
+                gameScreen.restart();
+            }
         });
+
+        gameScreen.restartBtn.addEventListener("click", (e) => {
+            let target = e.target;
+
+            if (target.id === "restart-btn") {
+                gameScreen.restart();
+            }
+        })
 
     }
 

@@ -39,8 +39,8 @@
 
             <div class="flex-container buttons">
                 <button class="btn" command="show-modal" commandfor="playerSetup">Setup</button>
-                <button class="btn" command="show-modal" commandfor="victoryModal">Test</button>
                 <button class="btn" id="start-btn">Play</button>
+                <button class="btn" id="restart-btn">Restart</button>
             </div>
         </div>
     </div>
@@ -66,11 +66,12 @@
             <h3 id="victory-message">Message</h3>
             
             <div class="dialog-choices" id="dialog-choices">
-                <button class="btn dialog-close-text" command="close" commandfor="victoryModal">close</button>
+                <button class="btn dialog-restart" id="victory-restart" command="close" commandfor="victoryModal">Restart</button>
                 <button class="btn next-round" id="next-round">Next Round</buttn>
+                <button class="btn dialog-close" id="victory-close" command="close" commandfor="victoryModal">X</button>
             </div>
             
-            <button class="btn dialog-close" command="close" commandfor="victoryModal">X</button>
+            
         </div>
     </dialog>
 
