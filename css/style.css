@@ -30,6 +30,17 @@
     align-items: center;
     justify-content: center;
     background-color: green;
+    font-size:xxx-large
+}
+
+[data-mark|="X"] {
+    background-color: blue;
+    color: white;
+}
+
+[data-mark|="O"] {
+    background-color: red;
+    color: white;
 }
 
 .flex-container {
