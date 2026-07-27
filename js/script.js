@@ -30,6 +30,8 @@ const gameBoard = (() => {
         for (let i = 0; i < board.length; i++) {
             board[i].mark = "";
         }
+
+        return board;
     }
 
     function check(boardMark) {
@@ -134,6 +136,8 @@ const gameScreen = (() => {
 
     const victoryModal = document.getElementById("victoryModal")
     const victoryMessage = document.getElementById("victory-message");
+    const dialogChoices = document.getElementById("dialog-choices");
+    const nextRound = document.getElementById("next-round");
 
     function refresh(gameboard, players) {
         renderBoard(gameboard);
@@ -193,11 +197,15 @@ const gameScreen = (() => {
 
         if (message === "win") {
             victoryMessage.innerText = "YOU WIN";
-        } else if(message === "lose") {
+        } else if (message === "lose") {
             victoryMessage.innerText = "YOU LOSE";
-        } else if(message === "draw") {
+        } else if (message === "draw") {
             victoryMessage.innerText = "DRAW";
         }
+    }
+
+    function closeVictory() {
+        victoryModal.close();
     }
 
     return {
@@ -205,21 +213,29 @@ const gameScreen = (() => {
         renderBoard,
         renderPlayers,
         showVictory,
+        closeVictory,
 
+        dialogChoices
     }
 
 })();
 
 const gameController = (() => {
 
+    // can be called by other factories
+    function gameStart(gameboard, player1) {
+        gameScreen.renderBoard(gameboard);
+        gameScreen.renderPlayers(player1);
+        gameController.renderEvents();
+        console.log("Game Start");
+    }
+
+    // strictly for the Play button
     function renderStart(gameboard, player1) {
         const startBtn = document.getElementById("start-btn");
 
         startBtn.addEventListener("click", (e) => {
-            gameScreen.renderBoard(gameboard);
-            gameScreen.renderPlayers(player1);
-            gameController.renderEvents();
-            console.log("Game Start");
+            gameStart(gameboard, player1);
         });
     }
 
@@ -249,6 +265,16 @@ const gameController = (() => {
                 } else {
                     console.log(`CLICKED! ${target.dataset.position} is TAKEN by ${target.dataset.mark}`);
                 }
+            }
+        });
+
+        gameScreen.dialogChoices.addEventListener("click", (e) => {
+            let target = e.target;
+
+            if (target.id === "next-round") {
+                console.log("GET READY FOR THE NEXT BATTLE");
+                console.log("BATTLE");
+                gamePlay.nextRound();
             }
         });
 
@@ -282,7 +308,8 @@ const gameController = (() => {
     return {
         renderStart,
         renderEvents,
-        playerNaming
+        playerNaming,
+        gameStart
     }
 })();
 
@@ -571,7 +598,7 @@ const gamePlay = (() => {
                     console.log("WIN");
                     score(temp[0].mark);
                     return true;
-                } else if (gameBoard.get("freeTiles") === 0){
+                } else if (gameBoard.get("freeTiles") === 0) {
                     gameScreen.showVictory("draw");
                 }
                 return false;
@@ -614,8 +641,15 @@ const gamePlay = (() => {
         gameController.renderStart(gameboard, player1);
     }
 
+    function nextRound() {
+        gameBoard.reset(gameboard);
+        gameController.gameStart(gameboard, player1);
+        gameScreen.closeVictory();
+    }
+
     return {
         start,
+        nextRound,
         getPosition,
         turn,
         enemyTurn,

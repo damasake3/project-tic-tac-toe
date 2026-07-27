@@ -90,3 +90,11 @@ dialog#victoryModal .dialog-contents {
     height: 100%;
 }
 
+div.dialog-choices {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    gap: 2em;
+}
